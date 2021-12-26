@@ -37,7 +37,7 @@ export const Caption = styled.div`
   height: 3.5rem;
   font-size: 1rem;
   text-align: left;
-  padding: 0.5rem 0.6rem ;
+  padding: 0.5rem 0.6rem;
   overflow: scroll;
 `;
 export const BlogStyleIcon = styled.div`
@@ -53,19 +53,23 @@ export const MotionIcon = styled(motion.div)`
 `;
 export const ClickedShareIcon = styled(motion.div)`
   color: rgb(0, 255, 179);
+  width: 2.65rem;
   font-size: 0.8rem;
   padding: 0.7rem;
 `;
 export const ShareIcon = styled(motion.div)`
+  width: 2.65rem;
   font-size: 0.8rem;
   padding: 0.7rem;
 `;
 export const ClickedHeartIcon = styled.div`
   color: rgb(255, 77, 77);
+  width: 2.65rem;
   font-size: 0.8rem;
   padding: 0.7rem;
 `;
 export const HeartIcon = styled.div`
+  width: 2.65rem;
   font-size: 0.8rem;
   padding: 0.7rem;
 `;
