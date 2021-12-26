@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCamera,
-  faPlus,
-  faTimesCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import {
   StyledPostForm,
   StyledFormBtn,
@@ -40,15 +36,17 @@ const Post = () => {
   function fileChange(e) {
     //   captureFile(e.target.files[0]);
 
-    setFileType(e.target.files[0].type);
-    let reader = new FileReader();
+    if (e.target.files && e.target.files[0]) {
+      setFileType(e.target.files[0].type);
+      let reader = new FileReader();
 
-    reader.onload = function (e) {
-      setFile(e.target.result);
-      setIsUploaded(true);
-    };
+      reader.onload = function (e) {
+        setFile(e.target.result);
+        setIsUploaded(true);
+      };
 
-    reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(e.target.files[0]);
+    }
   }
 
   // function handleSubmit(e) {
@@ -132,8 +130,7 @@ const Post = () => {
                       setFile(null);
                     }}
                   >
-                    {" "}
-                    <FontAwesomeIcon icon={faTimesCircle} />
+                    <FontAwesomeIcon icon={faTimes} />
                   </PreviewDltBtn>
                 </PreviewFile>
               )}

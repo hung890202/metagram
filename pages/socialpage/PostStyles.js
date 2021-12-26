@@ -65,14 +65,16 @@ export const PreviewVideo = styled.video`
   width: 16rem;
   object-fit: cover;
 `;
-export const PreviewImg = styled(motion.form)`
+export const PreviewImg = styled.img`
   height: 16rem;
   width: 16rem;
   object-fit: cover;
 `;
 export const PreviewDltBtn = styled.span`
   position: absolute;
-  margin: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  padding: 1rem;
 `;
 export const PostText = styled.label`
   background-color: #dddddd46;

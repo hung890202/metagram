@@ -10,7 +10,8 @@ let posts = [
   },
   {
     src: "https://ipfs.io/ipfs/QmPmpRDD9iaChuFwnbbABLHzpYpA7nASfMJWaJD2t7wtfB",
-    caption: "RedmonkeyRedmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey   ",
+    caption:
+      "RedmonkeyRedmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey Redmonkey   ",
     fileType: "image/png",
   },
   {
