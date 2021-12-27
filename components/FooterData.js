@@ -1,11 +1,11 @@
 const FooterData = [
   {
-    title: "INSTACHAIN ",
+    title: "METAGRAM ",
   },
   {
     title: "PAGES",
-    item1: "social",
-    path1: "/social",
+    item1: "FEEDS",
+    path1: "/FEEDS",
     item2: "NFT",
     path2: "/NFT",
   },

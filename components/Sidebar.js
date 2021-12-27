@@ -28,9 +28,9 @@ const DropDown = ({ isOpen, toggle }) => {
             transition={{ duration: 1 }}
             >
                 <StyledMeun>
-                <Link href="/Social" passHref>
+                <Link href="/Feeds" passHref>
           <MeunItem whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            social
+            FEEDS
           </MeunItem>
         </Link>
         <Link href="/NFT" passHref>

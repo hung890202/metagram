@@ -20,24 +20,23 @@ const Intro = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 2 }}
           >
-            Send Unlimited Post
+            Sharing or Minting 
           </IntroH1>
           <IntroP
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 2 }}
           >
-            Not afraid of crashes, not afraid of being deleted, record important
-            information, Here.
+            A metaverse instagram where people mint their memories.
           </IntroP>
-          <Link href="/Social" passHref>
+          <Link href="/Feeds" passHref>
             <BtnMotion
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 2 }}
             >
               <StyledBtn whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                Get Started
+                Getting Started
               </StyledBtn>
             </BtnMotion>
           </Link>

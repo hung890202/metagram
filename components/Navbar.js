@@ -18,7 +18,7 @@ const Navbar = ({toggle}) => {
     <Nav>
       <StyledLogo whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
         <Link href="/" passHref>
-          <Logo>Instachain</Logo>
+          <Logo>Metagram</Logo>
         </Link>
       </StyledLogo>
       <StyledSidebar>
@@ -32,9 +32,9 @@ const Navbar = ({toggle}) => {
         </StyledBars>
       </StyledSidebar>
       <StyledMenu>
-        <Link href="/Social" passHref>
+        <Link href="/Feeds" passHref>
           <MeunItem whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-            social
+            FEEDS
           </MeunItem>
         </Link>
         <Link href="/NFT" passHref>

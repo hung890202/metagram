@@ -64,7 +64,7 @@ function Home() {
         <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>{totalSupply}</h1>
+      {/* <h1>{totalSupply}</h1> */}
       {/* <button onClick={mint}></button> */}
       <Intro />
       <About />

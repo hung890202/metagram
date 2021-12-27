@@ -246,7 +246,7 @@ const Post = () => {
                   />
                   <Folder htmlFor="upload-input">
                     <FontAwesomeIcon icon={faCamera} />
-                    choose a photo or video
+                    choose one photo
                   </Folder>
                 </StyledFolder>
               ) : (
@@ -284,7 +284,7 @@ const Post = () => {
               id="caption"
               name="caption"
               onChange={captionChange}
-              placeholder="About some cool things"
+              placeholder="Say something about your cool stuff"
             />
           </PostText>
         </StyledPostForm>

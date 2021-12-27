@@ -20,10 +20,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/index.js"
     ],
-    "/Social": [
+    "/Feeds": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/Social.js"
+      "static/chunks/pages/Feeds.js"
+    ],
+    "/NFT": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/NFT.js"
     ],
     "/_app": [
       "static/chunks/webpack.js",
