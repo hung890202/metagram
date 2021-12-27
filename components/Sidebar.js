@@ -21,7 +21,7 @@ const DropDown = ({ isOpen, toggle }) => {
 
   return (
       <>
-      {!isOpen ? (
+      {isOpen ? (
             <StyledSidebar
             initial={{ y: -500 }}
             animate={{ y: 0 }}

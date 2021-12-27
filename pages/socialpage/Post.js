@@ -1,6 +1,7 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import ipfs  from "../contracts/ipfs"
 import {
   StyledPostForm,
   StyledFormBtn,
@@ -21,11 +22,149 @@ import {
   StyledPlusIcon,
 } from "./PostStyles";
 
+import React, {useState, useEffect} from 'react';
+
+import { c_abi, c_address } from "../contracts/feedsContract"
+
+let abi = c_abi // Paste your ABI here
+let contractAddress = c_address
+
+let Web3 = require('web3');
+
+const convertToBuffer = async (reader) => {
+  return Buffer.from(reader);
+};
+
+// const captureFile = async (file) => {
+//   const reader = new FileReader();
+//   console.log(file);
+//   let buffer;
+//   if (typeof file !== "undefined") {
+//     // captureFileType(file.type);
+//     reader.readAsArrayBuffer(file);
+//     reader.onloadend = async () => {
+//       buffer = await convertToBuffer(reader.result);
+//     };
+//   } else buffer = "";
+
+//   return buffer
+// };
+
+const Submit = async (file, caption, fileType) => {
+  let buffer = await convertToBuffer(file)//captureFile(file)
+  alert("Uploading on IPFS...");
+  // loading = true;
+  let imgHash;
+
+  let hashedImg = await ipfs.add(buffer)
+
+  imgHash = hashedImg[0].hash;
+    console.log('imgHash: ', imgHash);
+
+  let bufferDesc = await convertToBuffer(caption);
+  let hashedText = await ipfs.add(bufferDesc);
+  let textHash = hashedText[0].hash;
+
+  console.log(`fileType: ${fileType}`);
+  let bufferType = await convertToBuffer(fileType);
+  console.log(`bufferType: ${bufferType}`);
+  let hashedType = await ipfs.add(bufferType);
+  let typeHash = hashedType[0].hash;
+  console.log(`typeHash: ${typeHash}`);
+
+  console.log(typeof typeHash);
+
+
+  return{ imgHash, textHash, typeHash}
+// console.log(cnt)
+
+  // console.log("totalSupply: ", totalSupply)
+  // await contract.methods
+  // .sendHash(imgHash, textHash, typeHash)
+  // .send({ from: "0xB2125ceB65Da27B86f65522A0fAa7990f5d6a24C" })
+  // .on('transactionHash', function(hash){
+  //     console.log(hash)
+  // })
+  
+  
+  
+  // , (error, transactionHash) => {
+  //     console.log(error)
+  //   console.log(`transactionHash: ${transactionHash}`);
+  //   if (typeof transactionHash !== "undefined") {
+  //     alert("Storing on Ethereum...");
+  //     contract.once("NewPost", { from: "0xB2125ceB65Da27B86f65522A0fAa7990f5d6a24C" }, () => {
+  //       getPosts();
+  //       alert("Operation Finished! Refetching...");
+  //     });
+  //   }
+  //   loading = false;
+  // });
+  // const { state, send } = useIncrement();
+
+
+//  const cnt = useCount();
+  // const { state, send } = sendHash(imgHash, textHash, typeHash);
+
+};
+
+function mint(address, contract, imgHash, textHash, typeHash){
+  console.log(imgHash, textHash, typeHash)
+  let encoded = contract.methods.sendHash(imgHash, textHash, typeHash).encodeABI()
+
+  let tx = {
+      from: address,
+      to : contractAddress,
+      data : encoded,
+  }
+
+  let txHash = ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [tx],
+  }).then((hash) => {
+      alert("You can now view your transaction with hash: " + hash)
+  }).catch((err) => console.log(err))
+  
+  return txHash
+}
+
+
 const Post = () => {
+
+
+
   const [caption, setCaption] = useState("");
   const [file, setFile] = useState(undefined);
   const [fileType, setFileType] = useState("");
   const [isUploaded, setIsUploaded] = useState(false);
+
+  const [web3, setWeb3] = useState(null)
+  const [address, setAddress] = useState(null)
+  const [contract, setContract] = useState(null)
+  const [totalSupply, setTotalSupply] = useState(0)
+
+  // let abi = c_abi // Paste your ABI here
+  // let contractAddress = c_address
+
+  useEffect(() => {
+    window.ethereum ?
+      ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
+        setAddress(accounts[0])
+        let w3 = new Web3(ethereum)
+        setWeb3(w3)
+      
+        let c = new w3.eth.Contract(abi, contractAddress)
+        setContract(c)
+      
+        c.methods.getCounter().call().then((_supply) => {
+          // Optionally set it to the state to render it using React
+          setTotalSupply(_supply)
+        }).catch((err) => console.log(err))
+      }).catch((err) => console.log(err))
+    : console.log("Please install MetaMask")
+    
+    
+  }, [])
 
   function captionChange(e) {
     setCaption(e.target.value);
@@ -37,6 +176,7 @@ const Post = () => {
     //   captureFile(e.target.files[0]);
 
     if (e.target.files && e.target.files[0]) {
+      // setFile(e.target.files[0]);
       setFileType(e.target.files[0].type);
       let reader = new FileReader();
 
@@ -49,10 +189,13 @@ const Post = () => {
     }
   }
 
-  // function handleSubmit(e) {
-  //   e.preventDefault();
-  //   handleOk();
-  // }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    // handleOk();
+    const {imgHash, textHash, typeHash} = await Submit(file, caption, fileType);
+
+    mint(address, contract, imgHash, textHash, typeHash)
+  } 
 
   const [isOnClick, setIsOnClick] = useState(false);
   function Click() {
@@ -70,7 +213,7 @@ const Post = () => {
           initial={{ opacity: 0, y: -60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          //   onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
         >
           <StyledFormBtn>
             <CloseBtn
