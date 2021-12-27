@@ -5,7 +5,7 @@ const FooterData = [
   {
     title: "PAGES",
     item1: "social",
-    path1: "/social",
+    path1: "/Social",
     item2: "NFT",
     path2: "/NFT",
   },

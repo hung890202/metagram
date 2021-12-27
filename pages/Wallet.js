@@ -1,4 +1,6 @@
 import Head from "next/head";
+import User from "./walletpage/User";
+
 
 const Wallet = () => {
   return (
@@ -8,7 +10,7 @@ const Wallet = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>wallet</h1>
+      <User/>
     </div>
   );
 };

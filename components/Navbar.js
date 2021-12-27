@@ -13,7 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
-const Navbar = ({toggle}) => {
+const Navbar = ({ toggle }) => {
   return (
     <Nav>
       <StyledLogo whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>

@@ -15,6 +15,7 @@ export const StyledLogo = styled(motion.div)`
   cursor: pointer;
 `;
 export const Logo = styled.div`
+  font-size: 1.5rem;
   color: #f2f2f2;
   text-decoration: none;
 `;
