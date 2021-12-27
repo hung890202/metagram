@@ -68,7 +68,7 @@ const Social = () => {
       </Head>
 
       <Post />
-      <Feed />
+      <Feed address={address}/>
     </StyledSocial>
   );
 };

@@ -5,12 +5,15 @@ import { StyledFeed } from "./FeedStyles";
 import React, {useState, useEffect} from 'react';
 
 import { c_abi, c_address } from "../contracts/feedsContract"
+import { like_abi, like_address } from "../contracts/likeContract";
 import { getHashes } from "crypto";
 
 let abi = c_abi // Paste your ABI here
 let contractAddress = c_address
 
 let Web3 = require('web3');
+
+let account
 
 // let posts = [
 //   // {
@@ -104,75 +107,10 @@ let Web3 = require('web3');
 
 // }
 
-const getPosts = async (account) => {
-  // loading = false;
-  let w3 = new Web3(ethereum)
-  let contract = new w3.eth.Contract(abi, contractAddress)
-
-  const posts = [];
-  const counter = await contract.methods.getCounter().call({
-    from: account,
-  });
-
-  console.log('counter', counter);
-
-  if (counter !== null) {
-    const hashes = [];
-    const captions = [];
-    const types = [];
-    for (let i = counter; i >= 1; i -= 1) {
-      hashes.push(
-        contract.methods.getHash(i).call({
-          from: account,
-        })
-      );
-    }
-
-    const postHashes = await Promise.all(hashes);
-
-    for (let i = 0; i < postHashes.length; i += 1) {
-      captions.push(
-        fetch(`https://ipfs.io/ipfs/${postHashes[i].text}`).then((res) =>
-          res.text()
-        )
-      );
-    }
-
-    for (let i = 0; i < postHashes.length; i += 1) {
-      types.push(
-        fetch(`https://ipfs.io/ipfs/${postHashes[i].fileType}`).then((res) =>
-          res.text()
-        )
-      );
-    }
-
-    const postCaptions = await Promise.all(captions);
-    const postFileType = await Promise.all(types);
-
-    for (let i = 0; i < postHashes.length; i += 1) {
-    const res = await fetch(`https://ipfs.io/ipfs/${postHashes[i].img}`)
-    const b64img = await res.text()
-console.log(b64img)
-      posts.push({
-        id: i,
-        key: `key${i}`,
-        caption: postCaptions[i],
-        fileType: postFileType[i],
-        src: `${b64img}`,
-      });
-    }
-
-    //   this.currentPosts = posts;
-    // loading = false;
-  }
-  // console.log(posts)
-  return posts;
-};
-
-const Feed = () => {
+const Feed = (address) => {
 
   const [web3, setWeb3] = useState(null)
-  const [address, setAddress] = useState(null)
+  // const [address, setAddress] = useState(null)
   const [contract, setContract] = useState(null)
   // const [counter, setCounter] = useState(0)
   const [posts, setPosts] = useState([])
@@ -198,24 +136,115 @@ const Feed = () => {
   //   : console.log("Please install MetaMask")
   // })
 
-  useEffect(
-    async () => {
-    let ps = await getPosts(address)
-    console.log("ps", ps)
-    setPosts(ps)
+  
+  useEffect( async() => {
+    
+    window.ethereum ?
+      ethereum.request({ method: "eth_requestAccounts" }).then(async(accounts) => {
+        
+        console.log(accounts[0])
+        account = accounts[0]
+
+        let ps = await getPosts(account)
+        console.log("ps", ps)
+        setPosts(ps)
+
+      }).catch((err) => console.log(err))
+    : console.log("Please install MetaMask")
+
+
+
+  }, [])
+
+  const getLIkeAmount = async(account, _index) => {
+    let w3 = new Web3(ethereum)
+    let like_contract = new w3.eth.Contract(like_abi, like_address)
+    console.log(account)
+    let test =  await like_contract.methods.searchLikeAmount(_index).call({from: account})
+    console.log(test)
+    return test
   }
-  , [])
+
+  const getPosts = async (address) => {
+
+    console.log(address)
+    // loading = false;
+    let w3 = new Web3(ethereum)
+    let contract = new w3.eth.Contract(abi, contractAddress)
+  
+    const posts = [];
+    const counter = await contract.methods.getCounter().call({
+      from: address,
+    });
+  
+    console.log('counter', counter);
+  
+    if (counter !== null) {
+      const hashes = [];
+      const captions = [];
+      const types = [];
+      for (let i = counter; i >= 1; i -= 1) {
+        hashes.push(
+          contract.methods.getHash(i).call({
+            from: address,
+          })
+        );
+      }
+  
+      const postHashes = await Promise.all(hashes);
+  
+      for (let i = 0; i < postHashes.length; i += 1) {
+        captions.push(
+          fetch(`https://ipfs.io/ipfs/${postHashes[i].text}`).then((res) =>
+            res.text()
+          )
+        );
+      }
+  
+      for (let i = 0; i < postHashes.length; i += 1) {
+        types.push(
+          fetch(`https://ipfs.io/ipfs/${postHashes[i].fileType}`).then((res) =>
+            res.text()
+          )
+        );
+      }
+  
+      const postCaptions = await Promise.all(captions);
+      const postFileType = await Promise.all(types);
+  
+      for (let i = 0; i < postHashes.length; i += 1) {
+      const likeInfo = await getLIkeAmount(address, i)
+      const res = await fetch(`https://ipfs.io/ipfs/${postHashes[i].img}`)
+      const b64img = await res.text()
+  console.log(b64img)
+        posts.push({
+          id: i,
+          key: `key${i}`,
+          caption: postCaptions[i],
+          fileType: postFileType[i],
+          src: `${b64img}`,
+          likeCtr: likeInfo[0],
+          state: likeInfo[1],
+        });
+      }
+  
+      //   this.currentPosts = posts;
+      // loading = false;
+    }
+    // console.log(posts)
+    return posts;
+  };
 
 
   return posts.map((post) => {
-    const { src, caption, fileType } = post;
+    const { id, src, caption, fileType, likeCtr, state } = post;
     return (
       <StyledFeed
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        <Blog src={src} caption={caption} fileType={fileType} />
+        <Blog id={id} src={src} caption={caption} fileType={fileType} likeCtr={likeCtr} state={state} />
       </StyledFeed>
     );
   });
