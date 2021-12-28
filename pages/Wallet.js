@@ -1,4 +1,7 @@
 import Head from "next/head";
+import Profile from "./walletpage/Profile";
+
+import { UseWalletProvider } from "use-wallet";
 
 const Wallet = () => {
   return (
@@ -7,8 +10,9 @@ const Wallet = () => {
         <title>Wallet</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <h1>wallet</h1>
+      <UseWalletProvider>
+        <Profile />
+      </UseWalletProvider>
     </div>
   );
 };

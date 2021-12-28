@@ -1,13 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import contract from "../contracts/feedsContract"
-import getAccount from "./account"
-
-
+import contract from "../contracts/feedsContract";
+import getAccount from "./account";
 
 const getPosts = async () => {
-
-  let account = await fetch('http://localhost:3000/api/account');
-  account = "0xB2125ceB65Da27B86f65522A0fAa7990f5d6a24C"//await account.json()
+  let account = await fetch("http://localhost:3000/api/account");
+  account = "0xB2125ceB65Da27B86f65522A0fAa7990f5d6a24C"; //await account.json()
   console.log(account);
 
   const posts = [];
@@ -32,7 +29,7 @@ const getPosts = async () => {
     const postHashes = await Promise.all(hashes);
 
     for (let i = 0; i < postHashes.length; i += 1) {
-      console.log(postHashes[i].text)
+      console.log(postHashes[i].text);
       captions.push(
         fetch(`https://ipfs.io/ipfs/${postHashes[i].text}`).then((res) =>
           res.text()

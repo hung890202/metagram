@@ -2,21 +2,21 @@ import Blog from "./Blog";
 import { StyledFeed } from "./FeedStyles";
 // import { getPosts } from "../../api";
 
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 
-import { c_abi, c_address } from "../contracts/feedsContract"
+import { c_abi, c_address } from "../contracts/feedsContract";
 import { like_abi, like_address } from "../contracts/likeContract";
 import { getHashes } from "crypto";
 import { mint_abi, mint_address } from "../contracts/mintContract";
 import add from "ipfs-http-client/src/files-regular/add";
 import minify from "babel-plugin-styled-components/lib/visitors/minify";
 
-let abi = c_abi // Paste your ABI here
-let contractAddress = c_address
+let abi = c_abi; // Paste your ABI here
+let contractAddress = c_address;
 
-let Web3 = require('web3');
+let Web3 = require("web3");
 
-let account
+let account;
 
 // let posts = [
 //   // {
@@ -49,10 +49,10 @@ let account
 //       setAddress(accounts[0])
 //       let w3 = new Web3(ethereum)
 //       setWeb3(w3)
-    
+
 //       let c = new w3.eth.Contract(abi, contractAddress)
 //       setContract(c)
-    
+
 //       c.methods.getCounter().call().then((id) => {
 //         // Optionally set it to the state to render it using React
 //         getHash(id)
@@ -111,12 +111,11 @@ let account
 // }
 
 const Feed = (address) => {
-
-  const [web3, setWeb3] = useState(null)
+  const [web3, setWeb3] = useState(null);
   // const [address, setAddress] = useState(null)
-  const [contract, setContract] = useState(null)
+  const [contract, setContract] = useState(null);
   // const [counter, setCounter] = useState(0)
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState([]);
 
   // let abi = c_abi // Paste your ABI here
   // let contractAddress = c_address
@@ -127,10 +126,10 @@ const Feed = (address) => {
   //       setAddress(accounts[0])
   //       let w3 = new Web3(ethereum)
   //       setWeb3(w3)
-      
+
   //       let c = new w3.eth.Contract(abi, contractAddress)
   //       setContract(c)
-      
+
   //       c.methods.getCounter().call().then((_counter) => {
   //         // Optionally set it to the state to render it using React
   //         setCounter(_counter)
@@ -139,48 +138,47 @@ const Feed = (address) => {
   //   : console.log("Please install MetaMask")
   // })
 
-  
-  useEffect( async() => {
-    
-    window.ethereum ?
-      ethereum.request({ method: "eth_requestAccounts" }).then(async(accounts) => {
-        
-        account = accounts[0]
+  useEffect(async () => {
+    window.ethereum
+      ? ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then(async (accounts) => {
+            account = accounts[0];
 
-        let ps = await getPosts(account)
-        console.log("ps", ps)
-        setPosts(ps)
+            let ps = await getPosts(account);
+            console.log("ps", ps);
+            setPosts(ps);
+          })
+          .catch((err) => console.log(err))
+      : console.log("Please install MetaMask");
+  }, []);
 
-      }).catch((err) => console.log(err))
-    : console.log("Please install MetaMask")
+  const getLIkeAmount = async (account, _index) => {
+    let w3 = new Web3(ethereum);
+    let like_contract = new w3.eth.Contract(like_abi, like_address);
+    return await like_contract.methods
+      .searchLikeAmount(_index)
+      .call({ from: account });
+  };
 
-  }, [])
-
-  const getLIkeAmount = async(account, _index) => {
-    let w3 = new Web3(ethereum)
-    let like_contract = new w3.eth.Contract(like_abi, like_address)
-    return await like_contract.methods.searchLikeAmount(_index).call({from: account})
-  }
-
-  const getMintAmount = async(account, _index) => {
-    let w3 = new Web3(ethereum)
-    let mint_contract = new w3.eth.Contract(mint_abi, mint_address)
-    return await mint_contract.methods.getMint(_index).call({from: account})
-  }
+  const getMintAmount = async (account, _index) => {
+    let w3 = new Web3(ethereum);
+    let mint_contract = new w3.eth.Contract(mint_abi, mint_address);
+    return await mint_contract.methods.getMint(_index).call({ from: account });
+  };
 
   const getPosts = async (address) => {
-
     // loading = false;
-    let w3 = new Web3(ethereum)
-    let contract = new w3.eth.Contract(abi, contractAddress)
-  
+    let w3 = new Web3(ethereum);
+    let contract = new w3.eth.Contract(abi, contractAddress);
+
     const posts = [];
     const counter = await contract.methods.getCounter().call({
       from: address,
     });
-  
-    console.log('counter', counter);
-  
+
+    console.log("counter", counter);
+
     if (counter !== null) {
       const hashes = [];
       const captions = [];
@@ -192,9 +190,9 @@ const Feed = (address) => {
           })
         );
       }
-  
+
       const postHashes = await Promise.all(hashes);
-  
+
       for (let i = 0; i < postHashes.length; i += 1) {
         captions.push(
           fetch(`https://ipfs.io/ipfs/${postHashes[i].text}`).then((res) =>
@@ -202,7 +200,7 @@ const Feed = (address) => {
           )
         );
       }
-  
+
       for (let i = 0; i < postHashes.length; i += 1) {
         types.push(
           fetch(`https://ipfs.io/ipfs/${postHashes[i].fileType}`).then((res) =>
@@ -210,17 +208,17 @@ const Feed = (address) => {
           )
         );
       }
-  
+
       const postCaptions = await Promise.all(captions);
       const postFileType = await Promise.all(types);
-  
+
       for (let i = 0; i < postHashes.length; i += 1) {
-      const likeInfo = await getLIkeAmount(address, i)
-      const mintInfo = await getMintAmount(address, i)
-      console.log(mintInfo)
-      const res = await fetch(`https://ipfs.io/ipfs/${postHashes[i].img}`)
-      const b64img = await res.text()
-  console.log(b64img)
+        const likeInfo = await getLIkeAmount(address, i);
+        const mintInfo = await getMintAmount(address, i);
+        console.log(mintInfo);
+        const res = await fetch(`https://ipfs.io/ipfs/${postHashes[i].img}`);
+        const b64img = await res.text();
+        console.log(b64img);
         posts.push({
           id: i,
           key: `key${i}`,
@@ -233,7 +231,7 @@ const Feed = (address) => {
           mintState: mintInfo[1],
         });
       }
-  
+
       //   this.currentPosts = posts;
       // loading = false;
     }
@@ -241,19 +239,39 @@ const Feed = (address) => {
     return posts;
   };
 
-
-  return posts.slice(0).reverse().map((post) => {
-    const { id, src, caption, fileType, likeCtr, state, mintCount, mintState } = post;
-    return (
-      <StyledFeed
-        initial={{ opacity: 0, y: 60 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <Blog id={id} src={src} caption={caption} fileType={fileType} likeCtr={likeCtr} state={state} mintCount={mintCount} mintState={mintState} />
-      </StyledFeed>
-    );
-  });
+  return posts
+    .slice(0)
+    .reverse()
+    .map((post) => {
+      const {
+        id,
+        src,
+        caption,
+        fileType,
+        likeCtr,
+        state,
+        mintCount,
+        mintState,
+      } = post;
+      return (
+        <StyledFeed
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <Blog
+            id={id}
+            src={src}
+            caption={caption}
+            fileType={fileType}
+            likeCtr={likeCtr}
+            state={state}
+            mintCount={mintCount}
+            mintState={mintState}
+          />
+        </StyledFeed>
+      );
+    });
 };
 
 export default Feed;

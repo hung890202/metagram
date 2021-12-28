@@ -60,28 +60,24 @@ export default (req: NextApiRequest, res: NextApiResponse): Promise<any> => {
     )
   );
 
-  
-
-  const nft = sdk.getNFTModule(
-    "0x260E84b024719185a69aa28baaAD0DAa18028601"
-  );
+  const nft = sdk.getNFTModule("0x260E84b024719185a69aa28baaAD0DAa18028601");
 
   return new Promise<void>((resolve) => {
     // const { account, type } = req.body;
     // TODO: validations
-    let image = "https://ipfs.io/ipfs/QmRFZbxe2jiqGYrL1dXGoT2b9gd4csybxSUAKY6mnSTCDc"
-    const j = 
-                {
-                name: `🐷`,
-                description: `psytrance pig.`,
-                image: image,
-                    //     properties: {
-                    //     type: type,
-                    //     rarity: rarity,
-                    //     element: sample(["fire", "water", "earth", "lightning", "wind"]),
-                    //     attack: getRandomInt(10, 30),
-                    // },
-            }
+    let image =
+      "https://ipfs.io/ipfs/QmRFZbxe2jiqGYrL1dXGoT2b9gd4csybxSUAKY6mnSTCDc";
+    const j = {
+      name: `🐷`,
+      description: `psytrance pig.`,
+      image: image,
+      //     properties: {
+      //     type: type,
+      //     rarity: rarity,
+      //     element: sample(["fire", "water", "earth", "lightning", "wind"]),
+      //     attack: getRandomInt(10, 30),
+      // },
+    };
     // async/await works too!
     nft
       .mintTo("0x65AFC11916c2633EC2d0E4CE3f23f40475077906", j)

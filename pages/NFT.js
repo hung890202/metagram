@@ -1,6 +1,6 @@
 import Head from "next/head";
 import MintedNFT from "./mintedNFT/MintedNFT";
-import {StyledNFT} from "./NFTStyles"
+import { StyledNFT } from "./NFTStyles";
 
 const NFT = () => {
   return (
@@ -10,7 +10,7 @@ const NFT = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <StyledNFT>
-        <MintedNFT/>
+        <MintedNFT />
       </StyledNFT>
     </div>
   );

@@ -1,7 +1,7 @@
 // import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
-import ipfs  from "../contracts/ipfs"
+import ipfs from "../contracts/ipfs";
 import {
   StyledPostForm,
   StyledFormBtn,
@@ -22,14 +22,14 @@ import {
   StyledPlusIcon,
 } from "./PostStyles";
 
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 
-import { c_abi, c_address } from "../contracts/feedsContract"
+import { c_abi, c_address } from "../contracts/feedsContract";
 
-let abi = c_abi // Paste your ABI here
-let contractAddress = c_address
+let abi = c_abi; // Paste your ABI here
+let contractAddress = c_address;
 
-let Web3 = require('web3');
+let Web3 = require("web3");
 
 const convertToBuffer = async (reader) => {
   return Buffer.from(reader);
@@ -51,15 +51,15 @@ const convertToBuffer = async (reader) => {
 // };
 
 const Submit = async (file, caption, fileType) => {
-  let buffer = await convertToBuffer(file)//captureFile(file)
+  let buffer = await convertToBuffer(file); //captureFile(file)
   alert("Uploading on IPFS...");
   // loading = true;
   let imgHash;
 
-  let hashedImg = await ipfs.add(buffer)
+  let hashedImg = await ipfs.add(buffer);
 
   imgHash = hashedImg[0].hash;
-    console.log('imgHash: ', imgHash);
+  console.log("imgHash: ", imgHash);
 
   let bufferDesc = await convertToBuffer(caption);
   let hashedText = await ipfs.add(bufferDesc);
@@ -74,9 +74,8 @@ const Submit = async (file, caption, fileType) => {
 
   console.log(typeof typeHash);
 
-
-  return{ imgHash, textHash, typeHash}
-// console.log(cnt)
+  return { imgHash, textHash, typeHash };
+  // console.log(cnt)
 
   // console.log("totalSupply: ", totalSupply)
   // await contract.methods
@@ -85,9 +84,7 @@ const Submit = async (file, caption, fileType) => {
   // .on('transactionHash', function(hash){
   //     console.log(hash)
   // })
-  
-  
-  
+
   // , (error, transactionHash) => {
   //     console.log(error)
   //   console.log(`transactionHash: ${transactionHash}`);
@@ -102,69 +99,73 @@ const Submit = async (file, caption, fileType) => {
   // });
   // const { state, send } = useIncrement();
 
-
-//  const cnt = useCount();
+  //  const cnt = useCount();
   // const { state, send } = sendHash(imgHash, textHash, typeHash);
-
 };
 
-function mint(address, contract, imgHash, textHash, typeHash){
-  console.log(imgHash, textHash, typeHash)
-  let encoded = contract.methods.sendHash(imgHash, textHash, typeHash).encodeABI()
+function mint(address, contract, imgHash, textHash, typeHash) {
+  console.log(imgHash, textHash, typeHash);
+  let encoded = contract.methods
+    .sendHash(imgHash, textHash, typeHash)
+    .encodeABI();
 
   let tx = {
-      from: address,
-      to : contractAddress,
-      data : encoded,
-  }
+    from: address,
+    to: contractAddress,
+    data: encoded,
+  };
 
-  let txHash = ethereum.request({
-      method: 'eth_sendTransaction',
+  let txHash = ethereum
+    .request({
+      method: "eth_sendTransaction",
       params: [tx],
-  }).then((hash) => {
-      alert("You can now view your transaction with hash: " + hash)
-  }).catch((err) => console.log(err))
-  
-  return txHash
+    })
+    .then((hash) => {
+      alert("You can now view your transaction with hash: " + hash);
+    })
+    .catch((err) => console.log(err));
+
+  return txHash;
 }
 
-
 const Post = () => {
-
-
-
   const [caption, setCaption] = useState("");
   const [file, setFile] = useState(undefined);
   const [fileType, setFileType] = useState("");
   const [isUploaded, setIsUploaded] = useState(false);
 
-  const [web3, setWeb3] = useState(null)
-  const [address, setAddress] = useState(null)
-  const [contract, setContract] = useState(null)
-  const [totalSupply, setTotalSupply] = useState(0)
+  const [web3, setWeb3] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [totalSupply, setTotalSupply] = useState(0);
 
   // let abi = c_abi // Paste your ABI here
   // let contractAddress = c_address
 
   useEffect(() => {
-    window.ethereum ?
-      ethereum.request({ method: "eth_requestAccounts" }).then((accounts) => {
-        setAddress(accounts[0])
-        let w3 = new Web3(ethereum)
-        setWeb3(w3)
-      
-        let c = new w3.eth.Contract(abi, contractAddress)
-        setContract(c)
-      
-        c.methods.getCounter().call().then((_supply) => {
-          // Optionally set it to the state to render it using React
-          setTotalSupply(_supply)
-        }).catch((err) => console.log(err))
-      }).catch((err) => console.log(err))
-    : console.log("Please install MetaMask")
-    
-    
-  }, [])
+    window.ethereum
+      ? ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then((accounts) => {
+            setAddress(accounts[0]);
+            let w3 = new Web3(ethereum);
+            setWeb3(w3);
+
+            let c = new w3.eth.Contract(abi, contractAddress);
+            setContract(c);
+
+            c.methods
+              .getCounter()
+              .call()
+              .then((_supply) => {
+                // Optionally set it to the state to render it using React
+                setTotalSupply(_supply);
+              })
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err))
+      : console.log("Please install MetaMask");
+  }, []);
 
   function captionChange(e) {
     setCaption(e.target.value);
@@ -192,10 +193,14 @@ const Post = () => {
   async function handleSubmit(e) {
     e.preventDefault();
     // handleOk();
-    const {imgHash, textHash, typeHash} = await Submit(file, caption, fileType);
+    const { imgHash, textHash, typeHash } = await Submit(
+      file,
+      caption,
+      fileType
+    );
 
-    mint(address, contract, imgHash, textHash, typeHash)
-  } 
+    mint(address, contract, imgHash, textHash, typeHash);
+  }
 
   const [isOnClick, setIsOnClick] = useState(false);
   function Click() {
@@ -213,7 +218,7 @@ const Post = () => {
           initial={{ opacity: 0, y: -60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-            onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
         >
           <StyledFormBtn>
             <CloseBtn

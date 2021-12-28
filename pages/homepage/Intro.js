@@ -20,7 +20,7 @@ const Intro = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 2 }}
           >
-            Sharing or Minting 
+            Sharing or Minting
           </IntroH1>
           <IntroP
             initial={{ opacity: 0, x: -100 }}
