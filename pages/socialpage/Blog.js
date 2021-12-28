@@ -22,13 +22,35 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { like_abi, like_address } from "../contracts/likeContract";
-
-let account;
+import { mint_abi, mint_address } from "../contracts/mintContract";
 
 let Web3 = require('web3');
 let w3 = new Web3(ethereum);
 let like_contract = new w3.eth.Contract(like_abi, like_address)
+let mint_contract = new w3.eth.Contract(mint_abi, mint_address)
 
+// mint function
+function mintClick(_index, _likeCtr, account){
+  let encoded = mint_contract.methods.mint(_index, _likeCtr).encodeABI()
+
+  let tx = {
+      from: account,
+      to : mint_address,
+      data : encoded,
+  }
+
+  let txHash = ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [tx],
+  }).then((hash) => {
+      alert("You can now view your transaction with hash: " + hash)
+  }).catch((err) => console.log(err))
+  
+  return txHash
+}
+
+
+// like function 
 function likeClick(_index, account){
  
   let encoded = like_contract.methods.getLike(_index).encodeABI()
@@ -99,7 +121,7 @@ const Blog = ({ id, src, caption, fileType, likeCtr, state }) => {
   }
 
   function Mint() {
-    setMintAmount(MintAmount + 1);
+    mintClick(id, likeCtr, address)
     setIsMint(true);
   }
   function CancelMint() {
