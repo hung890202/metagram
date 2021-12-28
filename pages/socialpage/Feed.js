@@ -183,7 +183,7 @@ const Feed = (address) => {
       const hashes = [];
       const captions = [];
       const types = [];
-      for (let i = counter; i >= 1; i -= 1) {
+      for (let i = 1; i <= counter; i += 1) {
         hashes.push(
           contract.methods.getHash(i).call({
             from: address,
@@ -236,7 +236,7 @@ const Feed = (address) => {
   };
 
 
-  return posts.map((post) => {
+  return posts.slice(0).reverse().map((post) => {
     const { id, src, caption, fileType, likeCtr, state } = post;
     return (
       <StyledFeed
