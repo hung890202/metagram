@@ -22,21 +22,29 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { like_abi, like_address } from "../contracts/likeContract";
+//import { mint_abi, mint_address } from "../contracts/mintContract";
 import { mint_abi, mint_address } from "../contracts/mintContract";
 
 let Web3 = require('web3');
-let w3 = new Web3(ethereum);
-let like_contract = new w3.eth.Contract(like_abi, like_address)
-let mint_contract = new w3.eth.Contract(mint_abi, mint_address)
 
-// mint function
-function mintClick(_index, _likeCtr, account){
+function mintClick(_index, _likeCtr, account, _mintCtr){
+
+  if((Number(_mintCtr) + 1) * (Number(_mintCtr) + 1) > _likeCtr ){
+    alert("")
+    return 0;
+  }
+
+  let w3 = new Web3(ethereum);
+  let mint_contract = new w3.eth.Contract(mint_abi, mint_address)
+
+  
   let encoded = mint_contract.methods.mint(_index, _likeCtr).encodeABI()
 
   let tx = {
       from: account,
       to : mint_address,
       data : encoded,
+      nonce: "0x00",
   }
 
   let txHash = ethereum.request({
@@ -49,9 +57,11 @@ function mintClick(_index, _likeCtr, account){
   return txHash
 }
 
-
 // like function 
 function likeClick(_index, account){
+
+  let w3 = new Web3(window.ethereum);
+  let like_contract = new w3.eth.Contract(like_abi, like_address)
  
   let encoded = like_contract.methods.getLike(_index).encodeABI()
 
@@ -72,6 +82,9 @@ function likeClick(_index, account){
 }
 
 function dislikeClick(_index, account){
+
+  let w3 = new Web3(window.ethereum);
+  let like_contract = new w3.eth.Contract(like_abi, like_address)
  
   let encoded = like_contract.methods.dislike(_index).encodeABI()
 
@@ -91,11 +104,11 @@ function dislikeClick(_index, account){
   return txHash
 }
 
-const Blog = ({ id, src, caption, fileType, likeCtr, state }) => {
+const Blog = ({ id, src, caption, fileType, likeCtr, state, mintCount, mintState }) => {
   const [likeAmount, setLikeAmount] = useState(0);
   const [MintAmount, setMintAmount] = useState(0);
   const [isOnClick, setIsOnClick] = useState(state);
-  const [isMint, setIsMint] = useState(false);
+  const [isMint, setIsMint] = useState(mintState);
   const [address, setAddress] = useState(null)
 
   useEffect( async() => {
@@ -103,7 +116,6 @@ const Blog = ({ id, src, caption, fileType, likeCtr, state }) => {
     window.ethereum ?
       ethereum.request({ method: "eth_requestAccounts" }).then(async(accounts) => {
         
-        console.log(accounts[0])
         setAddress(accounts[0])
 
       }).catch((err) => console.log(err))
@@ -120,12 +132,11 @@ const Blog = ({ id, src, caption, fileType, likeCtr, state }) => {
     setIsOnClick(false);
   }
 
-  function Mint() {
-    mintClick(id, likeCtr, address)
+  function mintPost() {
+    mintClick(id, likeCtr, address, mintCount)
     setIsMint(true);
   }
   function CancelMint() {
-    setMintAmount(MintAmount - 1);
     setIsMint(false);
   }
 
@@ -157,12 +168,12 @@ const Blog = ({ id, src, caption, fileType, likeCtr, state }) => {
           {isMint ? (
             <ClickedShareIcon>
               <FontAwesomeIcon icon={faCheck} onClick={CancelMint} />
-              {MintAmount} Mint
+              {mintCount} Mint
             </ClickedShareIcon>
           ) : (
             <ShareIcon>
-              <FontAwesomeIcon icon={faShareSquare} onClick={Mint} />
-              {MintAmount} Mint
+              <FontAwesomeIcon icon={faShareSquare} onClick={mintPost} />
+              {mintCount} Mint
             </ShareIcon>
           )}
         </MotionIcon>

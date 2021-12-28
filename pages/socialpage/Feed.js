@@ -7,6 +7,9 @@ import React, {useState, useEffect} from 'react';
 import { c_abi, c_address } from "../contracts/feedsContract"
 import { like_abi, like_address } from "../contracts/likeContract";
 import { getHashes } from "crypto";
+import { mint_abi, mint_address } from "../contracts/mintContract";
+import add from "ipfs-http-client/src/files-regular/add";
+import minify from "babel-plugin-styled-components/lib/visitors/minify";
 
 let abi = c_abi // Paste your ABI here
 let contractAddress = c_address
@@ -142,7 +145,6 @@ const Feed = (address) => {
     window.ethereum ?
       ethereum.request({ method: "eth_requestAccounts" }).then(async(accounts) => {
         
-        console.log(accounts[0])
         account = accounts[0]
 
         let ps = await getPosts(account)
@@ -152,22 +154,22 @@ const Feed = (address) => {
       }).catch((err) => console.log(err))
     : console.log("Please install MetaMask")
 
-
-
   }, [])
 
   const getLIkeAmount = async(account, _index) => {
     let w3 = new Web3(ethereum)
     let like_contract = new w3.eth.Contract(like_abi, like_address)
-    console.log(account)
-    let test =  await like_contract.methods.searchLikeAmount(_index).call({from: account})
-    console.log(test)
-    return test
+    return await like_contract.methods.searchLikeAmount(_index).call({from: account})
+  }
+
+  const getMintAmount = async(account, _index) => {
+    let w3 = new Web3(ethereum)
+    let mint_contract = new w3.eth.Contract(mint_abi, mint_address)
+    return await mint_contract.methods.getMint(_index).call({from: account})
   }
 
   const getPosts = async (address) => {
 
-    console.log(address)
     // loading = false;
     let w3 = new Web3(ethereum)
     let contract = new w3.eth.Contract(abi, contractAddress)
@@ -214,6 +216,8 @@ const Feed = (address) => {
   
       for (let i = 0; i < postHashes.length; i += 1) {
       const likeInfo = await getLIkeAmount(address, i)
+      const mintInfo = await getMintAmount(address, i)
+      console.log(mintInfo)
       const res = await fetch(`https://ipfs.io/ipfs/${postHashes[i].img}`)
       const b64img = await res.text()
   console.log(b64img)
@@ -225,6 +229,8 @@ const Feed = (address) => {
           src: `${b64img}`,
           likeCtr: likeInfo[0],
           state: likeInfo[1],
+          mintCount: mintInfo[0],
+          mintState: mintInfo[1],
         });
       }
   
@@ -237,14 +243,14 @@ const Feed = (address) => {
 
 
   return posts.slice(0).reverse().map((post) => {
-    const { id, src, caption, fileType, likeCtr, state } = post;
+    const { id, src, caption, fileType, likeCtr, state, mintCount, mintState } = post;
     return (
       <StyledFeed
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
-        <Blog id={id} src={src} caption={caption} fileType={fileType} likeCtr={likeCtr} state={state} />
+        <Blog id={id} src={src} caption={caption} fileType={fileType} likeCtr={likeCtr} state={state} mintCount={mintCount} mintState={mintState} />
       </StyledFeed>
     );
   });
